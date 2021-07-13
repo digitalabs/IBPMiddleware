@@ -4,77 +4,8 @@
 				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-	<changeSet author="corina" id="v18.3.0-1">
-        <preConditions onFail="MARK_RAN">
-			<and>
-				<sqlCheck expectedResult="1">
-					SELECT COUNT(*) FROM location WHERE labbr='DEU' and locid=82;
-				</sqlCheck>
-				<sqlCheck expectedResult="0">
-					SELECT COUNT(*) FROM location WHERE labbr='FRG';
-				</sqlCheck>
-			</and>
-        </preConditions>
-        <comment> Rename location abbreviation for West Germany (locid 82) to FRG. IBP-4308 </comment>
-		<sql dbms="mysql" splitStatements="true">
-			UPDATE location SET labbr='FRG' WHERE labbr='DEU' AND locid=82;
-		</sql>
-	</changeSet>
 
-	<changeSet author="corina" id="v18.3.0-2">
-        <preConditions onFail="MARK_RAN">
-			<and>
-				<sqlCheck expectedResult="1">
-					SELECT COUNT(*) FROM location WHERE labbr='ATF' and locid=275;
-				</sqlCheck>
-				<sqlCheck expectedResult="0">
-					SELECT COUNT(*) FROM location WHERE labbr='TAAF';
-				</sqlCheck>
-			</and>
-        </preConditions>
-        <comment> Rename location abbreviation for French Southern Territories (locid 275) to TAAF. IBP-4308 </comment>
-		<sql dbms="mysql" splitStatements="true">
-			UPDATE location SET labbr='TAAF',lname='French Southern and Antarctic Lands' WHERE labbr='ATF' AND locid=275;
-		</sql>
-	</changeSet>
-
-	<changeSet author="corina" id="v18.3.0-3">
-        <preConditions onFail="MARK_RAN">
-			<and>
-            <sqlCheck expectedResult="1">
-                SELECT COUNT(*) FROM location WHERE labbr='UMI' and locid=282;
-            </sqlCheck>
-			<sqlCheck expectedResult="0">
-					SELECT COUNT(*) FROM location WHERE labbr='UMIP';
-			</sqlCheck>
-			</and>
-        </preConditions>
-        <comment> Rename location abbreviation for United States Minor Outlying Islands (locid 282) to UMIP. IBP-4308 </comment>
-		<sql dbms="mysql" splitStatements="true">
-			UPDATE location SET labbr='UMIP' WHERE labbr='UMI' AND locid=282;
-		</sql>
-	</changeSet>
-
-	<changeSet author="mderamos" id="v18.3.0-4">
-        <preConditions onFail="MARK_RAN">
-			<indexExists tableName="location" indexName="labbr_UNIQUE"/>
-		</preConditions>
-		<comment>Remove location abbr unique index if already existing</comment>
-		<dropIndex tableName="location" indexName="labbr_UNIQUE"/>
-	</changeSet>
-
-	<changeSet author="mderamos" id="v18.3.0-5">
-		<preConditions onFail="CONTINUE">
-			<and>
-				<not><indexExists tableName="location" indexName="uk_location_labbr"/></not>
-				<sqlCheck expectedResult="0">select count(*) from (SELECT count(*) from location where labbr is not null group by labbr having count(*) > 1) a </sqlCheck>
-			</and>
-		</preConditions>
-		<comment>Adding unique constraint to labbr column of location table </comment>
-	    <addUniqueConstraint columnNames="labbr" constraintName="uk_location_labbr" tableName="location"/>
-	</changeSet>
-
-	<changeSet author="gelli" id="v18.3.0-6">
+	<changeSet author="gelli" id="v18.3.0-1">
 		<preConditions onFail="MARK_RAN">
 			<tableExists tableName="ims_stock_transaction_bkp"/>
 		</preConditions>
@@ -84,7 +15,7 @@
 		<dropTable tableName="ims_stock_transaction_bkp"/>
 	</changeSet>
 
-	<changeSet author="gelli" id="v18.3.0-7">
+	<changeSet author="gelli" id="v18.3.0-2">
 		<preConditions onFail="MARK_RAN">
 			<tableExists tableName="listdata_project_bkp" />
 		</preConditions>
@@ -94,7 +25,7 @@
 		<dropTable tableName="listdata_project_bkp" />
 	</changeSet>
 
-	<changeSet author="gelli" id="v18.3.0-8">
+	<changeSet author="gelli" id="v18.3.0-3">
 		<preConditions onFail="MARK_RAN">
 			<tableExists tableName="listnms_bkp" />
 		</preConditions>
@@ -104,7 +35,7 @@
 		<dropTable tableName="listnms_bkp" />
 	</changeSet>
 
-    <changeSet author="clarysabel" id="v18.3.0-9">
+    <changeSet author="clarysabel" id="v18.3.0-4">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck expectedResult="0">select count(*) from cvterm where cvterm_id = 1813;</sqlCheck>
 		</preConditions>
@@ -115,7 +46,7 @@
         </sql>
     </changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-10">
+	<changeSet author="clarysabel" id="v18.3.0-5">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck expectedResult="0">select count(*) from cvterm where cvterm_id = 1814;</sqlCheck>
 		</preConditions>
@@ -126,7 +57,7 @@
         </sql>
     </changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-11">
+	<changeSet author="clarysabel" id="v18.3.0-6">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck expectedResult="0">select count(*) from cvterm where cvterm_id = 4031;</sqlCheck>
 		</preConditions>
@@ -137,7 +68,7 @@
         </sql>
     </changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-12">
+	<changeSet author="clarysabel" id="v18.3.0-7">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck expectedResult="0">select count(*) from cvterm where cvterm_id = 4032;</sqlCheck>
 		</preConditions>
@@ -148,7 +79,7 @@
         </sql>
     </changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-13">
+	<changeSet author="clarysabel" id="v18.3.0-8">
 		<preConditions onFail="MARK_RAN">
 			<not><tableExists tableName="udflds_attributes_bkp"></tableExists></not>
 		</preConditions>
@@ -198,7 +129,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-14">
+	<changeSet author="clarysabel" id="v18.3.0-9">
 		<preConditions onFail="MARK_RAN">
 			<and>
 				<tableExists tableName="udflds_attributes_bkp"></tableExists>
@@ -260,7 +191,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-15">
+	<changeSet author="clarysabel" id="v18.3.0-10">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck expectedResult="1">
 				SELECT
@@ -278,7 +209,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-16">
+	<changeSet author="clarysabel" id="v18.3.0-11">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck expectedResult="1">
 				SELECT
@@ -295,7 +226,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-17">
+	<changeSet author="clarysabel" id="v18.3.0-12">
 		<preConditions onFail="MARK_RAN">
 			<and>
 				<tableExists tableName="udflds_attributes_bkp"></tableExists>
@@ -336,7 +267,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-18">
+	<changeSet author="clarysabel" id="v18.3.0-13">
 		<preConditions onFail="MARK_RAN">
 			<and>
 				<tableExists tableName="udflds_attributes_bkp"></tableExists>
@@ -365,7 +296,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-19">
+	<changeSet author="clarysabel" id="v18.3.0-14">
 		<preConditions onFail="MARK_RAN">
 			<and>
 				<tableExists tableName="udflds_attributes_bkp"></tableExists>
@@ -441,7 +372,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-20">
+	<changeSet author="clarysabel" id="v18.3.0-15">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck expectedResult="1">
 				SELECT
@@ -459,7 +390,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-21">
+	<changeSet author="clarysabel" id="v18.3.0-16">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck expectedResult="1">
 				SELECT
@@ -477,7 +408,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-22">
+	<changeSet author="clarysabel" id="v18.3.0-17">
 		<preConditions onFail="MARK_RAN">
 			<not><columnExists tableName="atributs" columnName="cval_id"></columnExists></not>
 		</preConditions>
@@ -489,13 +420,251 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet author="clarysabel" id="v18.3.0-23">
+	<changeSet author="clarysabel" id="v18.3.0-18">
 		<preConditions onFail="MARK_RAN">
 			<not><columnExists tableName="atributs_aud" columnName="cval_id"></columnExists></not>
 		</preConditions>
 		<comment>Create cval_id column in atributs_aud table</comment>
 		<addColumn tableName="atributs_aud"><column name="cval_id" afterColumn="aval" type="int"></column></addColumn>
 	</changeSet>
+	
+	<changeSet author="corina" id="v18.3.0-19">
+        <preConditions onFail="MARK_RAN">
+			<and>
+				<sqlCheck expectedResult="1">
+					SELECT COUNT(*) FROM location WHERE labbr='DEU' and locid=82;
+				</sqlCheck>
+				<sqlCheck expectedResult="0">
+					SELECT COUNT(*) FROM location WHERE labbr='FRG';
+				</sqlCheck>
+			</and>
+        </preConditions>
+        <comment> Rename location abbreviation for West Germany (locid 82) to FRG. IBP-4308 </comment>
+		<sql dbms="mysql" splitStatements="true">
+			UPDATE location SET labbr='FRG' WHERE labbr='DEU' AND locid=82;
+		</sql>
+	</changeSet>
+
+	<changeSet author="corina" id="v18.3.0-20">
+        <preConditions onFail="MARK_RAN">
+			<and>
+				<sqlCheck expectedResult="1">
+					SELECT COUNT(*) FROM location WHERE labbr='ATF' and locid=275;
+				</sqlCheck>
+				<sqlCheck expectedResult="0">
+					SELECT COUNT(*) FROM location WHERE labbr='TAAF';
+				</sqlCheck>
+			</and>
+        </preConditions>
+        <comment> Rename location abbreviation for French Southern Territories (locid 275) to TAAF. IBP-4308 </comment>
+		<sql dbms="mysql" splitStatements="true">
+			UPDATE location SET labbr='TAAF',lname='French Southern and Antarctic Lands' WHERE labbr='ATF' AND locid=275;
+		</sql>
+	</changeSet>
+
+	<changeSet author="corina" id="v18.3.0-21">
+        <preConditions onFail="MARK_RAN">
+			<and>
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM location WHERE labbr='UMI' and locid=282;
+            </sqlCheck>
+			<sqlCheck expectedResult="0">
+					SELECT COUNT(*) FROM location WHERE labbr='UMIP';
+			</sqlCheck>
+			</and>
+        </preConditions>
+        <comment> Rename location abbreviation for United States Minor Outlying Islands (locid 282) to UMIP. IBP-4308 </comment>
+		<sql dbms="mysql" splitStatements="true">
+			UPDATE location SET labbr='UMIP' WHERE labbr='UMI' AND locid=282;
+		</sql>
+	</changeSet>
+	
+	<changeSet author="corina" id="v18.3.0-22">
+        <preConditions onFail="MARK_RAN">
+			<columnExists tableName="location" columnName="labbr"/>
+        </preConditions>
+        <comment> Increase length of column LABBR from varchar(8) to varchar(12) to allow L+locid concatenation</comment>
+		<sql dbms="mysql" splitStatements="true">
+				ALTER TABLE location MODIFY labbr varchar(12);
+		</sql>
+	</changeSet>
+	
+	<changeSet author="corina" id="v18.3.0-23">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) > 0 FROM location WHERE labbr IS NULL;
+            </sqlCheck>
+        </preConditions>
+        <comment> Set labbr=L+locid for null labbr</comment>
+		<sql dbms="mysql" splitStatements="true">
+			UPDATE location SET location.labbr = (SELECT CONCAT('L',CONVERT(`locid`,CHAR))) WHERE (((location.labbr) IS NULL));
+		</sql>
+	</changeSet>
+	
+	<changeSet author="corina" id="v18.3.0-24">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) > 0 FROM location WHERE labbr='-';
+            </sqlCheck>
+        </preConditions>
+        <comment> Set labbr=L+locid where labbr is a dash</comment>
+		<sql dbms="mysql" splitStatements="true">
+			UPDATE location SET location.labbr = (SELECT CONCAT('L',CONVERT(`locid`,CHAR))) WHERE (((location.labbr) = '-'));
+		</sql>
+	</changeSet>
+	
+	<changeSet author="corina" id="v18.3.0-25">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT
+				COUNT(*)
+				FROM
+				information_schema.routines
+				WHERE
+				routine_schema = DATABASE()
+				AND specific_name = 'resolveLocationMultipleDuplicates';
+			</sqlCheck>
+		</preConditions>
+		<sql dbms="mysql" splitStatements="false">
+			DROP PROCEDURE resolveLocationMultipleDuplicates;
+		</sql>
+	</changeSet>
+
+	<changeSet author="corina" id="v18.3.0-26">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">
+				SELECT
+				COUNT(*)
+				FROM
+				information_schema.routines
+				WHERE
+				routine_schema = DATABASE()
+				AND specific_name = 'resolveLocationMultipleDuplicates';
+			</sqlCheck>
+		</preConditions>
+		<comment>
+			Create SP that resolves duplication in location.LABBR
+		</comment>
+		<sql dbms="mysql" splitStatements="false">
+			<![CDATA[
+			
+			CREATE PROCEDURE resolveLocationMultipleDuplicates()
+			BEGIN
+			
+			DECLARE loopcount INT;
+			
+			SET @s = CONCAT('SELECT COUNT(l1.labbr) INTO @loopcount FROM location l1 
+			GROUP BY l1.labbr HAVING COUNT(l1.labbr)>1
+			ORDER BY COUNT(l1.labbr) DESC 
+			LIMIT 1;');
+
+			PREPARE stmt FROM @s;
+			EXECUTE stmt;	
+			DEALLOCATE PREPARE stmt;
+
+			WHILE @loopcount > 1 DO
+
+			SET @s = CONCAT('DROP TABLE IF EXISTS dupTable;');
+
+			PREPARE stmt FROM @s;
+			EXECUTE stmt;	
+			DEALLOCATE PREPARE stmt;
+
+			SET @s = CONCAT('CREATE TEMPORARY TABLE dupTable AS
+			SELECT l1.cntryid cntryID2,l1.locid locid2,  l1.labbr labbr2, 
+			l2.cntryid,l2.labbr,l2.locid 
+			FROM location l1 
+			LEFT JOIN location l2
+			ON l1.labbr =l2.labbr AND l2.locid<>l1.locid
+			WHERE l2.labbr IS NOT NULL
+			GROUP BY l1.labbr;');
+			
+			PREPARE stmt FROM @s;
+			EXECUTE stmt;	
+			DEALLOCATE PREPARE stmt;
+
+			SET @s = CONCAT('UPDATE location l, dupTable d 
+			SET l.labbr = CONCAT(l.labbr,@loopcount) WHERE l.locid = d.locid2;');
+			PREPARE stmt FROM @s;
+			EXECUTE stmt;	
+			DEALLOCATE PREPARE stmt;
+
+			SET @s = CONCAT('DROP TABLE IF EXISTS dupTable;');
+			PREPARE stmt FROM @s;
+			EXECUTE stmt;	
+			DEALLOCATE PREPARE stmt;
+
+			SET @s = CONCAT('
+			SET @loopcount = @loopcount-1;');
+			PREPARE stmt FROM @s;
+			EXECUTE stmt;	
+			DEALLOCATE PREPARE stmt;
+
+			END WHILE;
+
+			END;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet author="corina" id="v18.3.0-27">
+		<preConditions onFail="MARK_RAN">
+			<and>
+				<sqlCheck expectedResult="1">
+					SELECT COUNT(l1.labbr) > 0 FROM location l1 GROUP BY l1.labbr HAVING COUNT(l1.labbr)>1;
+				</sqlCheck>
+				<sqlCheck expectedResult="1">
+					SELECT
+					COUNT(*)
+					FROM
+					information_schema.routines
+					WHERE
+					routine_schema = DATABASE()
+					AND specific_name = 'resolveLocationMultipleDuplicates';
+				</sqlCheck>
+			</and>
+		</preConditions>
+		<sql dbms="mysql" splitStatements="false">
+			call resolveLocationMultipleDuplicates();
+		</sql>
+	</changeSet>
+
+	<changeSet author="corina" id="v18.3.0-28">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT
+				COUNT(*)
+				FROM
+				information_schema.routines
+				WHERE
+				routine_schema = DATABASE()
+				AND specific_name = 'resolveLocationMultipleDuplicates';
+			</sqlCheck>
+		</preConditions>
+		<sql dbms="mysql" splitStatements="false">
+			DROP PROCEDURE resolveLocationMultipleDuplicates;
+		</sql>
+	</changeSet>
+	
+	<changeSet author="mderamos" id="v18.3.0-29">
+        <preConditions onFail="MARK_RAN">
+			<indexExists tableName="location" indexName="labbr_UNIQUE"/>
+		</preConditions>
+		<comment>Remove location abbr unique index if already existing</comment>
+		<dropIndex tableName="location" indexName="labbr_UNIQUE"/>
+	</changeSet>
+
+	<changeSet author="mderamos" id="v18.3.0-30">
+		<preConditions onFail="CONTINUE">
+			<and>
+				<not><indexExists tableName="location" indexName="uk_location_labbr"/></not>
+				<sqlCheck expectedResult="0">select count(*) from (SELECT count(*) from location where labbr is not null group by labbr having count(*) > 1) a </sqlCheck>
+			</and>
+		</preConditions>
+		<comment>Adding unique constraint to labbr column of location table </comment>
+	    <addUniqueConstraint columnNames="labbr" constraintName="uk_location_labbr" tableName="location"/>
+	</changeSet>
+
 
 	<changeSet author="lkovacic" id="v18.3.0-24">
 		<preConditions onFail="MARK_RAN">
