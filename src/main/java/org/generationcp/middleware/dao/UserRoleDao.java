@@ -31,15 +31,28 @@ public class UserRoleDao extends GenericDAO<UserRole, Long> {
 			+"','"+ PermissionsEnum.ADD_PROGRAM.toString()+"', '"+ PermissionsEnum.MANAGE_PROGRAMS+"'))" //
 			+"  and ur.userid = :userId and r.active = 1";//
 
-
-		private static final String GET_CROPS_WITH_ADD_PROGRAM_PERMISSION_FOR_A_CROP_ROLE_SQL = "select distinct ur.crop_name from users_roles ur "//
-		+"  inner join role r on ur.role_id = r.id " //
-		+"  inner join role_type type on type.role_type_id = r.role_type_id " //
-		+"  inner join role_permission rp on r.id = rp.role_id " //
-		+"  inner join permission p on rp.permission_id = p.permission_id "//
-		+"  where (r.role_type_id = " + RoleType.CROP.getId() + " and p.name in ('" + PermissionsEnum.CROP_MANAGEMENT.toString() + "', '"+ PermissionsEnum.MANAGE_PROGRAMS.toString() //
-		+"','"+ PermissionsEnum.ADD_PROGRAM.toString()+"'))" //
-		+"  and ur.userid = :userId and r.active =1 "; //
+	/**
+	 * See also {@link PermissionDAO#SQL_FILTERED_PERMISSIONS}
+	 */
+	private static final String GET_CROPS_WITH_ADD_PROGRAM_PERMISSION_FOR_A_CROP_ROLE_SQL = "select distinct ur.crop_name " //
+		+ " from users_roles ur "//
+		+ " inner join role r on ur.role_id = r.id " //
+		+ " inner join role_type type on type.role_type_id = r.role_type_id " //
+		+ " inner join role_permission rp on r.id = rp.role_id " //
+		+ " inner join permission p on rp.permission_id = p.permission_id "//
+		+ " where (r.role_type_id = " + RoleType.CROP.getId() //
+		+ " and not exists( " //
+		+ "      select 1  " //
+		+ "      from workbench_project p1 " //
+		+ "               inner join users_roles ur1 on ur1.workbench_project_id = p1.project_id " //
+		+ "               inner join role r1 on ur1.role_id = r1.id " //
+		+ "      where r1.role_type_id =  " + RoleType.PROGRAM.getId()  //
+		+ "        and ur1.crop_name = ur.crop_name and ur1.userid = ur.userid " //
+		+ " ) " //
+		+ " and p.name in ('" + PermissionsEnum.CROP_MANAGEMENT.toString()
+		+ "', '" + PermissionsEnum.MANAGE_PROGRAMS.toString() //
+		+ "','" + PermissionsEnum.ADD_PROGRAM.toString() + "'))" //
+		+ " and ur.userid = :userId and r.active = 1 "; //
 
 	public List<UserRole> getByProgramId(final Long programId) {
 		List<UserRole> toReturn;

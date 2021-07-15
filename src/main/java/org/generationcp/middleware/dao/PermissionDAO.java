@@ -4,6 +4,7 @@ import org.generationcp.middleware.domain.workbench.PermissionDto;
 import org.generationcp.middleware.domain.workbench.RoleType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.Permission;
+import org.generationcp.middleware.pojos.workbench.PermissionsEnum;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
@@ -66,6 +67,37 @@ public class PermissionDAO extends GenericDAO<Permission, Integer> {
 		+ "  or (r.role_type_id = "+ RoleType.PROGRAM.getId() +" and ur.crop_name = :cropName and ur.workbench_project_id = :projectId)) " //
 		+ "and ur.userid = :userId and r.active = 1";
 
+	/**
+	 * IMPORTANT!!!
+	 * This is HOTFIX (band-aid fix) for v18.0.2 for showing the ADD program button from dashboard (IBP-4800)
+	 * for those with permissions while the crop and program context is not yet available.
+	 * It will return the CROP_MANAGEMENT, MANAGE_PROGRAMS, ADD_PROGRAM permissions if the user has a role on any crop
+	 * which has those permissions and has no program restriction (a program role for that crop)
+	 */
+	private static final String SQL_ADD_PROGRAM_PERMISSIONS = "select " //
+		+ "p.permission_id as id, " //
+		+ "p.name as name, " //
+		+ "p.description as description, " //
+		+ "p.parent_id as parentId," //
+		+ "p.workbench_sidebar_category_link_id as workbenchCategoryLinkId " //
+		+ "from permission p " //
+		+ "inner join role_permission rp on p.permission_id = rp.permission_id " //
+		+ "inner join role r on rp.role_id = r.id " //
+		+ "inner join users_roles ur on r.id = ur.role_id " //
+		+ "where  (r.role_type_id = " + RoleType.CROP.getId() //
+		+ " and not exists( " //
+		+ "      select 1  " //
+		+ "      from workbench_project p1 " //
+		+ "               inner join users_roles ur1 on ur1.workbench_project_id = p1.project_id " //
+		+ "               inner join role r1 on ur1.role_id = r1.id " //
+		+ "      where r1.role_type_id =  " + RoleType.PROGRAM.getId()  //
+		+ "        and ur1.crop_name = ur.crop_name and ur1.userid = ur.userid " //
+		+ " ) " //
+		+ " and p.name in ('" + PermissionsEnum.CROP_MANAGEMENT.toString()  //
+		+ "', '" + PermissionsEnum.MANAGE_PROGRAMS.toString()  //
+		+ "', '" + PermissionsEnum.ADD_PROGRAM.toString() + "')) " //
+		+ " and ur.userid = :userId and r.active = 1";
+
 	private static final String PERMISSION_CHILDREN = "select " //
 		+ "p.permission_id as id, " //
 		+ "p.name as name, " //
@@ -95,6 +127,31 @@ public class PermissionDAO extends GenericDAO<Permission, Integer> {
 					}
 				}
 			}
+			/**
+			 * This is HOTFIX (band-aid fix only!) for v18.0.2 for showing the ADD program button from dashboard (IBP-4800)
+			 * 	 for those with permissions while the crop and program context is not yet available.
+			 * 	 It will inject the CROP_MANAGEMENT, MANAGE_PROGRAMS, ADD_PROGRAM permissions - if not yet added -
+			 * 	 if the user has a role on any crop/program which has those permissions.
+			 * 	 CAVEAT: Code below could be improved (mainly copied pattern above) with the priority of having the RIGHT behavior over clean code
+ 			 */
+			final SQLQuery query2 = this.getSession().createSQLQuery(PermissionDAO.SQL_ADD_PROGRAM_PERMISSIONS);
+			query2.setParameter("userId", userId);
+			query2.addScalar("id").addScalar("name").addScalar("parentId")
+				.addScalar("description").addScalar("workbenchCategoryLinkId");
+			query2.setResultTransformer(Transformers.aliasToBean(PermissionDto.class));
+			final List<PermissionDto> copy2 = new ArrayList<>();
+			final List<PermissionDto> results2 = query2.list();
+			copy2.addAll(results2);
+			for (final PermissionDto permission : results2) {
+				for (final PermissionDto permission1 : results2) {
+					if (permission1.getId().equals((permission.getParentId()))) {
+						copy2.remove(permission);
+					}
+				}
+			}
+			copy2.stream().filter(p -> !copy.contains(p)).forEach(copy::add);
+			/* END OF HOTFIX */
+
 			return copy;
 		} catch (final HibernateException e) {
 			final String message = "Error with getPermissions query from RoleDAO: " + e.getMessage();
