@@ -12,7 +12,7 @@
 		<itext.version>2.1.7</itext.version>
 		<reflections.version>0.9.9</reflections.version>
 		<atomikos.version>3.9.3</atomikos.version>
-		<spring.version>4.1.6.RELEASE</spring.version>
+		<spring.version>5.2.4.RELEASE</spring.version>
 		<liquibase.version>3.6.1</liquibase.version>
 		<envConfig>${user.name}</envConfig>
 		<hibernate.version>4.2.21.Final</hibernate.version>
