@@ -1,10 +1,17 @@
 package org.generationcp.middleware.domain.germplasm.importation;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.apache.commons.lang3.StringUtils;
+import org.generationcp.middleware.api.brapi.v2.germplasm.GermplasmImportRequest;
 import org.pojomatic.Pojomatic;
 import org.pojomatic.annotations.AutoProperty;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @AutoProperty
 @JsonPropertyOrder({
@@ -14,7 +21,7 @@ public class GermplasmImportDTO {
 
 	private Integer clientId;
 
-	private String germplasmUUID;
+	private String germplasmPUI;
 
 	private String locationAbbr;
 
@@ -37,13 +44,13 @@ public class GermplasmImportDTO {
 	public GermplasmImportDTO() {
 	}
 
-	public GermplasmImportDTO(final Integer clientId, final String germplasmUUID, final String locationAbbr,
+	public GermplasmImportDTO(final Integer clientId, final String germplasmPUI, final String locationAbbr,
 		final String breedingMethodAbbr,
 		final String reference,
 		final String preferredName, final Map<String, String> names, final Map<String, String> attributes, final String creationDate,
 		final String progenitor1, final String progenitor2) {
 		this.clientId = clientId;
-		this.germplasmUUID = germplasmUUID;
+		this.germplasmPUI = germplasmPUI;
 		this.locationAbbr = locationAbbr;
 		this.breedingMethodAbbr = breedingMethodAbbr;
 		this.reference = reference;
@@ -56,7 +63,7 @@ public class GermplasmImportDTO {
 	}
 
 	public Integer getClientId() {
-		return clientId;
+		return this.clientId;
 	}
 
 	public void setClientId(final Integer clientId) {
@@ -64,7 +71,7 @@ public class GermplasmImportDTO {
 	}
 
 	public String getLocationAbbr() {
-		return locationAbbr;
+		return this.locationAbbr;
 	}
 
 	public void setLocationAbbr(final String locationAbbr) {
@@ -72,23 +79,23 @@ public class GermplasmImportDTO {
 	}
 
 	public String getBreedingMethodAbbr() {
-		return breedingMethodAbbr;
+		return this.breedingMethodAbbr;
 	}
 
 	public void setBreedingMethodAbbr(final String breedingMethodAbbr) {
 		this.breedingMethodAbbr = breedingMethodAbbr;
 	}
 
-	public String getGermplasmUUID() {
-		return germplasmUUID;
+	public String getGermplasmPUI() {
+		return this.germplasmPUI;
 	}
 
-	public void setGermplasmUUID(final String germplasmUUID) {
-		this.germplasmUUID = germplasmUUID;
+	public void setGermplasmPUI(final String germplasmPUI) {
+		this.germplasmPUI = germplasmPUI;
 	}
 
 	public String getReference() {
-		return reference;
+		return this.reference;
 	}
 
 	public void setReference(final String reference) {
@@ -96,7 +103,7 @@ public class GermplasmImportDTO {
 	}
 
 	public String getPreferredName() {
-		return preferredName;
+		return this.preferredName;
 	}
 
 	public void setPreferredName(final String preferredName) {
@@ -104,7 +111,7 @@ public class GermplasmImportDTO {
 	}
 
 	public Map<String, String> getNames() {
-		return names;
+		return this.names;
 	}
 
 	public void setNames(final Map<String, String> names) {
@@ -112,7 +119,7 @@ public class GermplasmImportDTO {
 	}
 
 	public Map<String, String> getAttributes() {
-		return attributes;
+		return this.attributes;
 	}
 
 	public void setAttributes(final Map<String, String> attributes) {
@@ -120,7 +127,7 @@ public class GermplasmImportDTO {
 	}
 
 	public String getCreationDate() {
-		return creationDate;
+		return this.creationDate;
 	}
 
 	public void setCreationDate(final String creationDate) {
@@ -128,7 +135,7 @@ public class GermplasmImportDTO {
 	}
 
 	public String getProgenitor1() {
-		return progenitor1;
+		return this.progenitor1;
 	}
 
 	public void setProgenitor1(final String progenitor1) {
@@ -136,7 +143,7 @@ public class GermplasmImportDTO {
 	}
 
 	public String getProgenitor2() {
-		return progenitor2;
+		return this.progenitor2;
 	}
 
 	public void setProgenitor2(final String progenitor2) {
@@ -156,6 +163,29 @@ public class GermplasmImportDTO {
 	@Override
 	public boolean equals(final Object o) {
 		return Pojomatic.equals(this, o);
+	}
+
+	public boolean isGermplasmPUIExisting(final Collection<String> existingGermplasmPUIs){
+		if (!existingGermplasmPUIs.contains(this.getGermplasmPUI())) {
+			final Optional<String> germplasmPUIFromNames = this.getGermplasmPUIFromNames();
+			return existingGermplasmPUIs.contains(germplasmPUIFromNames.orElse(""));
+		}
+		return true;
+	}
+
+	public Optional<String> getGermplasmPUIFromNames() {
+		return this.names.entrySet().stream().filter(s -> GermplasmImportRequest.PUI_NAME_TYPE.equalsIgnoreCase(s.getKey()))
+			.map(Map.Entry::getValue).collect(Collectors.toList()).stream().findFirst();
+	}
+
+	public List<String> collectGermplasmPUIs() {
+		final List<String> puisList = new ArrayList<>();
+		if (!StringUtils.isEmpty(this.getGermplasmPUI())) {
+			puisList.add(this.getGermplasmPUI());
+		}
+		final Optional<String> puiFromNames = this.getGermplasmPUIFromNames();
+		puiFromNames.ifPresent(puisList::add);
+		return puisList;
 	}
 
 }

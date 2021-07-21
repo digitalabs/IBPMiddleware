@@ -9,20 +9,20 @@ import java.util.List;
 @AutoProperty
 public class GermplasmMatchRequestDto {
 
-	private List<String> germplasmUUIDs;
+	private List<String> germplasmPUIs;
 
 	private List<String> names;
 
-	public List<String> getGermplasmUUIDs() {
-		return germplasmUUIDs;
+	public List<String> getGermplasmPUIs() {
+		return this.germplasmPUIs;
 	}
 
-	public void setGermplasmUUIDs(final List<String> germplasmUUIDs) {
-		this.germplasmUUIDs = germplasmUUIDs;
+	public void setGermplasmPUIs(final List<String> germplasmPUIs) {
+		this.germplasmPUIs = germplasmPUIs;
 	}
 
 	public List<String> getNames() {
-		return names;
+		return this.names;
 	}
 
 	public void setNames(final List<String> names) {
@@ -45,7 +45,7 @@ public class GermplasmMatchRequestDto {
 	}
 
 	public boolean isValid() {
-		if (CollectionUtils.isEmpty(germplasmUUIDs) && CollectionUtils.isEmpty(names)) {
+		if (CollectionUtils.isEmpty(this.germplasmPUIs) && CollectionUtils.isEmpty(this.names)) {
 			return false;
 		}
 		return true;

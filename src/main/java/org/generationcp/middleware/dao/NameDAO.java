@@ -464,6 +464,26 @@ public class NameDAO extends GenericDAO<Name, Integer> {
 		return returnList;
 	}
 
+	public List<String> getExistingGermplasmPUIs(final List<String> germplasmPUIList) {
+		List<String> returnList = new ArrayList<>();
+		if (germplasmPUIList != null && !germplasmPUIList.isEmpty()) {
+			try {
+				final String sql = "SELECT n.nval from names n "
+					+ "INNER JOIN germplsm g ON g.gid = n.gid AND g.deleted = 0 AND g.grplce = 0 "
+					+ "INNER JOIN udflds u on u.fldno = n.ntype AND u.ftable = 'NAMES' and u.ftype = 'NAME' and u.fcode = 'PUI' "
+					+ "WHERE n.nval in (:germplasmPUIList)";
+				final SQLQuery query = this.getSession().createSQLQuery(sql);
+				query.setParameterList("germplasmPUIList", germplasmPUIList);
+				returnList = query.list();
+			} catch (final HibernateException e) {
+				throw new MiddlewareQueryException(
+					"Error with getExistingGermplasmPUIs(germplasmPUIList=" + germplasmPUIList + "): " + e.getMessage(), e);
+			}
+		}
+		return returnList;
+	}
+
+
 	public List<GermplasmNameDto> getGermplasmNamesByGids(final List<Integer> gids) {
 		final StringBuilder queryBuilder =
 			new StringBuilder(SELECT_GERMPLASM_NAMES);

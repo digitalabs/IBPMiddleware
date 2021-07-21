@@ -2,9 +2,9 @@ package org.generationcp.middleware.api.brapi.v2.observationunit;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.generationcp.middleware.api.brapi.GermplasmServiceBrapi;
 import org.generationcp.middleware.api.brapi.v1.germplasm.GermplasmDTO;
 import org.generationcp.middleware.api.brapi.v2.germplasm.ExternalReferenceDTO;
-import org.generationcp.middleware.api.germplasm.GermplasmService;
 import org.generationcp.middleware.dao.dms.ExperimentDao;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -68,7 +68,7 @@ public class ObservationUnitServiceImpl implements ObservationUnitService {
 	private final ObjectMapper jacksonMapper;
 
 	@Resource
-	private GermplasmService germplasmService;
+	private GermplasmServiceBrapi germplasmServiceBrapi;
 
 	@Resource
 	private OntologyService ontologyService;
@@ -150,7 +150,7 @@ public class ObservationUnitServiceImpl implements ObservationUnitService {
 			requestDtos.stream().map(ObservationUnitImportRequestDto::getGermplasmDbId).collect(Collectors.toList());
 		final GermplasmSearchRequestDto germplasmSearchRequestDto = new GermplasmSearchRequestDto();
 		germplasmSearchRequestDto.setGermplasmDbIds(germplasmDbIds);
-		final Map<String, GermplasmDTO> germplasmDTOMap = this.germplasmService.searchFilteredGermplasm(germplasmSearchRequestDto, null)
+		final Map<String, GermplasmDTO> germplasmDTOMap = this.germplasmServiceBrapi.searchGermplasmDTO(germplasmSearchRequestDto, null)
 			.stream().collect(Collectors.toMap(GermplasmDTO::getGermplasmDbId, Function.identity()));
 
 		final List<Integer> trialIds = requestDtos.stream().map(r -> Integer.valueOf(r.getTrialDbId())).collect(Collectors.toList());

@@ -14,6 +14,8 @@ public class GermplasmDto {
 
 	private String germplasmUUID;
 
+	private String germplasmPUI;
+
 	private String preferredName;
 
 	private String creationDate;
@@ -208,6 +210,14 @@ public class GermplasmDto {
 
 	public void setGermplasmOrigin(final GermplasmOriginDto germplasmOrigin) {
 		this.germplasmOrigin = germplasmOrigin;
+	}
+
+	public String getGermplasmPUI() {
+		return this.germplasmPUI;
+	}
+
+	public void setGermplasmPUI(final String germplasmPUI) {
+		this.germplasmPUI = germplasmPUI;
 	}
 
 	@Override

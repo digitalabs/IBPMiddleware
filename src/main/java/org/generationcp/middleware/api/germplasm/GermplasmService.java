@@ -1,27 +1,19 @@
 package org.generationcp.middleware.api.germplasm;
 
-import org.generationcp.middleware.api.brapi.v1.germplasm.GermplasmDTO;
-import org.generationcp.middleware.api.brapi.v2.germplasm.GermplasmImportRequest;
-import org.generationcp.middleware.api.brapi.v2.germplasm.GermplasmUpdateRequest;
-import org.generationcp.middleware.api.nametype.GermplasmNameTypeDTO;
 import org.generationcp.middleware.domain.germplasm.GermplasmBasicDetailsDto;
 import org.generationcp.middleware.domain.germplasm.GermplasmDto;
 import org.generationcp.middleware.domain.germplasm.GermplasmUpdateDTO;
-import org.generationcp.middleware.domain.germplasm.PedigreeDTO;
 import org.generationcp.middleware.domain.germplasm.ProgenitorsDetailsDto;
 import org.generationcp.middleware.domain.germplasm.ProgenitorsUpdateRequestDto;
-import org.generationcp.middleware.domain.germplasm.ProgenyDTO;
 import org.generationcp.middleware.domain.germplasm.importation.GermplasmImportRequestDto;
 import org.generationcp.middleware.domain.germplasm.importation.GermplasmImportResponseDto;
 import org.generationcp.middleware.domain.germplasm.importation.GermplasmMatchRequestDto;
 import org.generationcp.middleware.domain.oms.Term;
-import org.generationcp.middleware.domain.search_request.brapi.v1.GermplasmSearchRequestDto;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 public interface GermplasmService {
@@ -65,20 +57,6 @@ public interface GermplasmService {
 
 	Set<Integer> importGermplasmUpdates(String programUUID, List<GermplasmUpdateDTO> germplasmUpdateDTOList);
 
-	List<GermplasmDTO> createGermplasm(String cropname, List<GermplasmImportRequest> germplasmImportRequestList);
-
-	GermplasmDTO updateGermplasm(String germplasmDbId, GermplasmUpdateRequest germplasmUpdateRequest);
-
-	long countFilteredGermplasm(GermplasmSearchRequestDto germplasmSearchRequestDTO);
-
-	List<GermplasmDTO> searchFilteredGermplasm(GermplasmSearchRequestDto germplasmSearchRequestDTO, Pageable pageable);
-
-	Optional<GermplasmDTO> getGermplasmDTOByGUID(String germplasmUUID);
-
-	long countGermplasmByStudy(Integer studyDbId);
-
-	List<GermplasmDTO> getGermplasmByStudy(Integer studyDbId, Pageable pageable);
-
 	/**
 	 * Delete the specified germplasm
 	 *
@@ -95,10 +73,6 @@ public interface GermplasmService {
 	Set<Integer> getGermplasmUsedInLockedList(List<Integer> gids);
 
 	Set<Integer> getGermplasmUsedInStudies(List<Integer> gids);
-
-	PedigreeDTO getPedigree(Integer gid, String notation, Boolean includeSiblings);
-
-	ProgenyDTO getProgeny(Integer gid);
 
 	GermplasmDto getGermplasmDtoById(Integer gid);
 

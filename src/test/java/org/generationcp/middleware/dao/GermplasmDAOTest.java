@@ -802,7 +802,7 @@ public class GermplasmDAOTest extends IntegrationTestBase {
 
 	@Test
 	public void testCountGermplasmDTOs_FilterByGenus() {
-		final List<String> names = this.saveGermplasmWithNames(GermplasmImportRequest.GENUS);
+		final List<String> names = this.saveGermplasmWithNames(GermplasmImportRequest.GENUS_NAME_TYPE);
 		final GermplasmSearchRequestDto request = new GermplasmSearchRequestDto();
 		request.setGermplasmGenus(names);
 		final Long count = this.dao.countGermplasmDTOs(request);
@@ -811,7 +811,7 @@ public class GermplasmDAOTest extends IntegrationTestBase {
 
 	@Test
 	public void testCountGermplasmDTOs_FilterByAccessionNumbers() {
-		final List<String> names = this.saveGermplasmWithNames(GermplasmImportRequest.ACCNO);
+		final List<String> names = this.saveGermplasmWithNames(GermplasmImportRequest.ACCNO_NAME_TYPE);
 		final GermplasmSearchRequestDto request = new GermplasmSearchRequestDto();
 		request.setAccessionNumbers(names);
 		final Long count = this.dao.countGermplasmDTOs(request);
@@ -820,7 +820,7 @@ public class GermplasmDAOTest extends IntegrationTestBase {
 
 	@Test
 	public void testCountGermplasmDTOs_FilterBySpecies() {
-		final List<String> attributes = this.saveGermplasmWithAttributes(GermplasmImportRequest.SPECIES);
+		final List<String> attributes = this.saveGermplasmWithAttributes(GermplasmImportRequest.SPECIES_ATTR);
 		final GermplasmSearchRequestDto request = new GermplasmSearchRequestDto();
 		request.setGermplasmSpecies(attributes);
 		final Long count = this.dao.countGermplasmDTOs(request);
@@ -830,8 +830,8 @@ public class GermplasmDAOTest extends IntegrationTestBase {
 	@Test
 	public void testCountGermplasmDTOs_FilterBySynonyms() {
 		final List<String> allNames = new ArrayList<>();
-		allNames.addAll(this.saveGermplasmWithNames(GermplasmImportRequest.GENUS));
-		allNames.addAll(this.saveGermplasmWithNames(GermplasmImportRequest.ACCNO));
+		allNames.addAll(this.saveGermplasmWithNames(GermplasmImportRequest.GENUS_NAME_TYPE));
+		allNames.addAll(this.saveGermplasmWithNames(GermplasmImportRequest.ACCNO_NAME_TYPE));
 		final GermplasmSearchRequestDto request = new GermplasmSearchRequestDto();
 		request.setGermplasmNames(allNames);
 		final Long count = this.dao.countGermplasmDTOs(request);
@@ -840,7 +840,7 @@ public class GermplasmDAOTest extends IntegrationTestBase {
 
 	@Test
 	public void testCountGermplasmDTOs_FilterByCommonCropNames() {
-		final List<String> attributes = this.saveGermplasmWithAttributes(GermplasmImportRequest.CROPNM);
+		final List<String> attributes = this.saveGermplasmWithAttributes(GermplasmImportRequest.CROPNM_ATTR);
 		final GermplasmSearchRequestDto request = new GermplasmSearchRequestDto();
 		request.setCommonCropNames(attributes);
 		final Long count = this.dao.countGermplasmDTOs(request);
@@ -850,9 +850,9 @@ public class GermplasmDAOTest extends IntegrationTestBase {
 	@Test
 	public void testCountGermplasmDTOs_FilterByParentDbId() {
 		final Germplasm femaleParent = GermplasmTestDataInitializer.createGermplasmWithPreferredName();
-		GermplasmGuidGenerator.generateGermplasmGuids(cropType, Collections.singletonList(femaleParent));
+		GermplasmGuidGenerator.generateGermplasmGuids(this.cropType, Collections.singletonList(femaleParent));
 		final Germplasm maleParent = GermplasmTestDataInitializer.createGermplasmWithPreferredName();
-		GermplasmGuidGenerator.generateGermplasmGuids(cropType, Collections.singletonList(maleParent));
+		GermplasmGuidGenerator.generateGermplasmGuids(this.cropType, Collections.singletonList(maleParent));
 		this.dao.save(femaleParent);
 		this.dao.save(maleParent);
 
@@ -884,7 +884,7 @@ public class GermplasmDAOTest extends IntegrationTestBase {
 		this.dao.save(maleParent);
 
 		final Germplasm cross = GermplasmTestDataInitializer.createGermplasmWithPreferredName();
-		GermplasmGuidGenerator.generateGermplasmGuids(cropType, Collections.singletonList(cross));
+		GermplasmGuidGenerator.generateGermplasmGuids(this.cropType, Collections.singletonList(cross));
 		cross.setGpid1(femaleParent.getGid());
 		cross.setGpid2(maleParent.getGid());
 		cross.setGnpgs(2);

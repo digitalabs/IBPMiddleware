@@ -1,0 +1,40 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+	<changeSet author="darla" id="v18.4.0-1">
+		<preConditions onFail="MARK_RAN">
+			<and>
+				<sqlCheck expectedResult="0">
+					SELECT COUNT(1) FROM udflds where ftable = 'NAMES' AND ftype = 'NAME' and fcode = 'PUI';
+				</sqlCheck>
+				<sqlCheck expectedResult="0">
+					SELECT COUNT(1) FROM udflds where fldno = 40;
+				</sqlCheck>
+			</and>
+		</preConditions>
+		<comment>Insert PUI nametype into udflds table - using fldno 40 if it is not yet existing</comment>
+		<sql dbms="mysql" splitStatements="false">
+			INSERT INTO udflds (fldno, ftable, ftype, fcode, fname, ffmt, fdesc, lfldno, fuid, fdate, scaleid)
+			VALUES (40, 'NAMES', 'NAME', 'PUI', 'PERMANENT UNIQUE IDENTIFIER', '-', 'The Permanent Unique Identifier which represents a germplasm
+				MCPD (v2.1) Any persistent, unique identifier assigned to the accession so it can be unambiguously referenced at the global level and the information associated with it.', 0, 0, 20210701, 0);
+		</sql>
+	</changeSet>
+
+	<changeSet author="darla" id="v18.4.0-2">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">
+				SELECT COUNT(1) FROM udflds where ftable = 'NAMES' AND ftype = 'NAME' and fcode = 'PUI';
+			</sqlCheck>
+		</preConditions>
+		<comment>Insert PUI nametype into udflds table - using next available fldno meaning fldno 40 was taken</comment>
+		<sql dbms="mysql" splitStatements="false">
+			INSERT INTO udflds (ftable, ftype, fcode, fname, ffmt, fdesc, lfldno, fuid, fdate, scaleid)
+			VALUES ('NAMES', 'NAME', 'PUI', 'PERMANENT UNIQUE IDENTIFIER', '-', 'The Permanent Unique Identifier which represents a germplasm
+				MCPD (v2.1) Any persistent, unique identifier assigned to the accession so it can be unambiguously referenced at the global level and the information associated with it.', 0, 0, 20210701, 0);
+		</sql>
+	</changeSet>
+
+</databaseChangeLog>

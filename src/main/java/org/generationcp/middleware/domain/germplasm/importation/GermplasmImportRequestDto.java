@@ -23,7 +23,7 @@ public class GermplasmImportRequestDto {
 	private List<GermplasmImportDTO> germplasmList;
 
 	public PedigreeConnectionType getConnectUsing() {
-		return connectUsing;
+		return this.connectUsing;
 	}
 
 	public void setConnectUsing(final PedigreeConnectionType connectUsing) {
@@ -31,7 +31,7 @@ public class GermplasmImportRequestDto {
 	}
 
 	public List<GermplasmImportDTO> getGermplasmList() {
-		return germplasmList;
+		return this.germplasmList;
 	}
 
 	public void setGermplasmList(final List<GermplasmImportDTO> germplasmList) {
@@ -39,7 +39,7 @@ public class GermplasmImportRequestDto {
 	}
 
 	public boolean isSkipIfExists() {
-		return skipIfExists;
+		return this.skipIfExists;
 	}
 
 	public void setSkipIfExists(final boolean skipIfExists) {
@@ -60,5 +60,6 @@ public class GermplasmImportRequestDto {
 	public boolean equals(final Object o) {
 		return Pojomatic.equals(this, o);
 	}
+
 
 }

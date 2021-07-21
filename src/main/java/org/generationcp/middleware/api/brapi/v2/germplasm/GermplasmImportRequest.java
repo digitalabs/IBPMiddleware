@@ -1,35 +1,41 @@
 package org.generationcp.middleware.api.brapi.v2.germplasm;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.apache.commons.lang3.StringUtils;
 import org.pojomatic.Pojomatic;
 import org.pojomatic.annotations.AutoProperty;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @AutoProperty
 public class GermplasmImportRequest {
 
-	public static final String CROPNM = "CROPNM_AP_text";
-	public static final String ORIGIN = "SORIG_AP_text";
-	public static final String INSTCODE = "INSTCODE_AP_text";
-	public static final String INSTNAME = "ORIGININST_AP_text";
-	public static final String PLOTCODE = "PLOTCODE_AP_text";
-	public static final String SPECIES = "SPNAM_AP_text";
-	public static final String SPECIES_AUTH = "SPAUTH_AP_text";
-	public static final String SUBTAX = "SUBTAX_AP_text";
-	public static final String SUBTAX_AUTH = "STAUTH_AP_text";
-	public static final String ACCNO = "ACCNO";
-	public static final String PED = "PED";
-	public static final String GENUS = "GENUS";
-	public static final String LNAME = "LNAME";
-	public static final List<String> BRAPI_SPECIFIABLE_NAMETYPES = Arrays.asList(ACCNO, PED, GENUS, LNAME);
+	public static final String CROPNM_ATTR = "CROPNM_AP_text";
+	public static final String ORIGIN_ATTR = "SORIG_AP_text";
+	public static final String INSTCODE_ATTR = "INSTCODE_AP_text";
+	public static final String INSTNAME_ATTR = "ORIGININST_AP_text";
+	public static final String PLOTCODE_ATTR = "PLOTCODE_AP_text";
+	public static final String SPECIES_ATTR = "SPNAM_AP_text";
+	public static final String SPECIES_AUTH_ATTR = "SPAUTH_AP_text";
+	public static final String SUBTAX_ATTR = "SUBTAX_AP_text";
+	public static final String SUBTAX_AUTH_ATTR = "STAUTH_AP_text";
+	public static final String ACCNO_NAME_TYPE = "ACCNO";
+	public static final String PED_NAME_TYPE = "PED";
+	public static final String GENUS_NAME_TYPE = "GENUS";
+	public static final String PUI_NAME_TYPE = "PUI";
+	public static final String LNAME_NAME_TYPE = "LNAME";
+	public static final List<String> BRAPI_SPECIFIABLE_NAMETYPES = Arrays.asList(ACCNO_NAME_TYPE, PED_NAME_TYPE, GENUS_NAME_TYPE, LNAME_NAME_TYPE, PUI_NAME_TYPE);
 	public static final List<String> BRAPI_SPECIFIABLE_ATTRTYPES =
-		Arrays.asList(CROPNM, ORIGIN, INSTCODE, INSTNAME, PLOTCODE, SPECIES, SPECIES_AUTH, SUBTAX, SUBTAX_AUTH);
+		Arrays.asList(CROPNM_ATTR, ORIGIN_ATTR, INSTCODE_ATTR, INSTNAME_ATTR, PLOTCODE_ATTR, SPECIES_ATTR, SPECIES_AUTH_ATTR, SUBTAX_ATTR,
+			SUBTAX_AUTH_ATTR);
 
 	private String accessionNumber;
 	private String acquisitionDate;
@@ -320,25 +326,49 @@ public class GermplasmImportRequest {
 
 	public Map<String, String> getCustomAttributeFieldsMap() {
 		final Map<String, String> attrMap = new HashMap<>();
-		attrMap.put(CROPNM, this.getCommonCropName());
-		attrMap.put(ORIGIN, this.getGermplasmOrigin());
-		attrMap.put(INSTCODE, this.getInstituteCode());
-		attrMap.put(INSTNAME, this.getInstituteName());
-		attrMap.put(PLOTCODE, this.getSeedSource());
-		attrMap.put(SPECIES, this.getSpecies());
-		attrMap.put(SPECIES_AUTH, this.getSpeciesAuthority());
-		attrMap.put(SUBTAX, this.getSubtaxa());
-		attrMap.put(SUBTAX_AUTH, this.getSubtaxaAuthority());
+		attrMap.put(CROPNM_ATTR, this.getCommonCropName());
+		attrMap.put(ORIGIN_ATTR, this.getGermplasmOrigin());
+		attrMap.put(INSTCODE_ATTR, this.getInstituteCode());
+		attrMap.put(INSTNAME_ATTR, this.getInstituteName());
+		attrMap.put(PLOTCODE_ATTR, this.getSeedSource());
+		attrMap.put(SPECIES_ATTR, this.getSpecies());
+		attrMap.put(SPECIES_AUTH_ATTR, this.getSpeciesAuthority());
+		attrMap.put(SUBTAX_ATTR, this.getSubtaxa());
+		attrMap.put(SUBTAX_AUTH_ATTR, this.getSubtaxaAuthority());
 		return attrMap;
 	}
 
 	public Map<String, String> getCustomNamesFieldsMap() {
 		final Map<String, String> namesMap = new HashMap<>();
-		namesMap.put(ACCNO, this.getAccessionNumber());
-		namesMap.put(GENUS, this.getGenus());
-		namesMap.put(PED, this.getPedigree());
-		namesMap.put(LNAME, this.getDefaultDisplayName());
+		namesMap.put(ACCNO_NAME_TYPE, this.getAccessionNumber());
+		namesMap.put(GENUS_NAME_TYPE, this.getGenus());
+		namesMap.put(PED_NAME_TYPE, this.getPedigree());
+		namesMap.put(LNAME_NAME_TYPE, this.getDefaultDisplayName());
+		namesMap.put(PUI_NAME_TYPE, this.getGermplasmPUI());
 		return namesMap;
+	}
+
+	public boolean isGermplasmPUIInList(final Collection<String> puiList){
+		if (!puiList.contains(this.getGermplasmPUI())) {
+			final Optional<String> germplasmPUIFromNames = this.getGermplasmPUIFromSynonyms();
+			return puiList.contains(germplasmPUIFromNames.orElse(""));
+		}
+		return true;
+	}
+
+	public Optional<String> getGermplasmPUIFromSynonyms() {
+		return this.synonyms.stream().filter(s -> GermplasmImportRequest.PUI_NAME_TYPE.equalsIgnoreCase(s.getType()))
+			.map(Synonym::getSynonym).collect(Collectors.toList()).stream().findFirst();
+	}
+
+	public List<String> collectGermplasmPUIs() {
+		final List<String> puisList = new ArrayList<>();
+		if (!StringUtils.isEmpty(this.getGermplasmPUI())) {
+			puisList.add(this.getGermplasmPUI());
+		}
+		final Optional<String> germplasmPUIFromSynonym = this.getGermplasmPUIFromSynonyms();
+		germplasmPUIFromSynonym.ifPresent(puisList::add);
+		return puisList;
 	}
 
 }
